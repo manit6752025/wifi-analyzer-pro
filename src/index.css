@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 5%;
+    --foreground: 210 40% 96%;
+    --card: 222 40% 8%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 40% 8%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 188 100% 50%;
+    --primary-foreground: 222 47% 5%;
+    --secondary: 222 35% 12%;
+    --secondary-foreground: 210 40% 80%;
+    --muted: 222 35% 12%;
+    --muted-foreground: 215 20% 50%;
+    --accent: 263 70% 60%;
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 210 40% 96%;
+    --border: 222 30% 14%;
+    --input: 222 35% 12%;
+    --ring: 188 100% 50%;
+    --radius: 0.75rem;
+    --cyan: 188 100% 50%;
+    --purple: 263 70% 60%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground font-inter antialiased; }
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: hsl(var(--background)); }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+
+.glow-cyan { box-shadow: 0 0 20px hsla(188, 100%, 50%, 0.3); }
+
+.glass {
+  background: hsla(222, 40%, 8%, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border));
+}
+
+@keyframes pulse-signal { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.pulse-signal { animation: pulse-signal 2s ease-in-out infinite; }
+
+.grid-pattern {
+  background-image:
+    linear-gradient(hsla(188, 100%, 50%, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(188, 100%, 50%, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}

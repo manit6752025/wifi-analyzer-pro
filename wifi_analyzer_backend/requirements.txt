@@ -1,0 +1,4 @@
+psutil>=5.9.0
+# Windows only (uncomment if needed):
+# pywifi
+# comtypes
