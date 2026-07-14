@@ -98,3 +98,11 @@ sudo systemctl start wifi-analyzer
 - Python 3.8+
 - Node.js 18+
 - Root/Administrator privileges for live WiFi scanning
+
+## Platform Notes
+
+| Platform | Live Scanning | Demo Mode |
+|---|---|---|
+| Linux / Raspberry Pi | ✅ | ✅ |
+| Windows 11 | ✅ | ✅ |
+| macOS | ❌ (no iw) | ✅ |
