@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RefreshCw, Wifi, Radio, BarChart2, Map, ArrowRightLeft, Terminal, Circle, Cpu, Activity, Globe, Search } from 'lucide-react';
+import { RefreshCw, Wifi, Radio, BarChart2, Map, ArrowRightLeft, Terminal, Circle, Cpu, Activity, Globe, Search, Network } from 'lucide-react';
 import useWifiData from '../hooks/useWifiData';
 import StatsBar from '../components/wifi/StatsBar';
 import NetworkCard from '../components/wifi/NetworkCard';
@@ -13,6 +13,7 @@ import PhyInfoPanel from '../components/wifi/PhyInfoPanel';
 import LinkStatsPanel from '../components/wifi/LinkStatsPanel';
 import DiagnosticsPanel from '../components/wifi/DiagnosticsPanel';
 import APDeepScanPanel from '../components/wifi/APDeepScanPanel';
+import DeviceDiscoveryPanel from '../components/wifi/DeviceDiscoveryPanel';
 
 const TABS = [
   { id: 'networks', label: 'Networks', icon: Wifi },
@@ -24,10 +25,11 @@ const TABS = [
   { id: 'history', label: 'Signal History', icon: Radio },
   { id: 'heatmap', label: 'Heatmap', icon: Map },
   { id: 'band', label: 'Band Steering', icon: ArrowRightLeft },
+  { id: 'devices', label: 'Devices', icon: Network },
 ];
 
 export default function WiFiAnalyzer() {
-  const { networks, congestion, systemInfo, phyInfo, linkStats, diagnostics, loading, error, backendConnected, lastScan, history, refresh } = useWifiData(true, 5000);
+  const { networks, congestion, systemInfo, phyInfo, linkStats, diagnostics, devices, loading, error, backendConnected, lastScan, history, refresh } = useWifiData(true, 5000);
   const [activeTab, setActiveTab] = useState('networks');
   const [selectedNetwork, setSelectedNetwork] = useState(null);
   const [sortBy, setSortBy] = useState('rssi');
@@ -157,6 +159,12 @@ export default function WiFiAnalyzer() {
                   <div className="glass rounded-xl p-5">
                     <h2 className="text-sm font-semibold text-foreground mb-4">Band Steering Analysis</h2>
                     <BandSteeringPanel networks={networks} />
+                  </div>
+                )}
+                {activeTab === 'devices' && (
+                  <div className="glass rounded-xl p-5">
+                    <h2 className="text-sm font-semibold text-foreground mb-4">Device Discovery — ARP Table</h2>
+                    <DeviceDiscoveryPanel devices={devices} loading={loading && !devices} />
                   </div>
                 )}
               </motion.div>

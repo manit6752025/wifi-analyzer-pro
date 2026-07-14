@@ -26,29 +26,33 @@ export default function useWifiData(autoRefresh = true, interval = 5000) {
   const [backendConnected, setBackendConnected] = useState(false);
   const [lastScan, setLastScan] = useState(new Date());
   const [history, setHistory] = useState({});
+  const [devices, setDevices] = useState([]);
   const timerRef = useRef(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [scanRes, sysRes, phyRes, linkRes, diagRes] = await Promise.all([
+      const [scanRes, sysRes, phyRes, linkRes, diagRes, devRes] = await Promise.all([
         fetch(`${API_BASE}/api/scan`, { signal: AbortSignal.timeout(4000) }),
         fetch(`${API_BASE}/api/system`, { signal: AbortSignal.timeout(4000) }),
         fetch(`${API_BASE}/api/phy`, { signal: AbortSignal.timeout(4000) }),
         fetch(`${API_BASE}/api/link`, { signal: AbortSignal.timeout(4000) }),
         fetch(`${API_BASE}/api/diagnostics`, { signal: AbortSignal.timeout(15000) }),
+        fetch(`${API_BASE}/api/devices`, { signal: AbortSignal.timeout(10000) }),
       ]);
       const scanData = await scanRes.json();
       const sysData = await sysRes.json();
       const phyData = await phyRes.json();
       const linkData = await linkRes.json();
       const diagData = await diagRes.json();
+      const devData = await devRes.json();
       setNetworks(scanData.networks || []);
       setCongestion(scanData.congestion || {});
       setSystemInfo(sysData);
       setPhyInfo(phyData);
       setLinkStats(linkData);
       setDiagnostics(diagData);
+      setDevices(devData.devices || []);
       setBackendConnected(true);
       setError(null);
       setLastScan(new Date());
@@ -78,5 +82,5 @@ export default function useWifiData(autoRefresh = true, interval = 5000) {
     return () => clearInterval(timerRef.current);
   }, [fetchData, autoRefresh, interval]);
 
-  return { networks, congestion, systemInfo, phyInfo, linkStats, diagnostics, loading, error, backendConnected, lastScan, history, refresh: fetchData };
+  return { networks, congestion, systemInfo, phyInfo, linkStats, diagnostics, devices, loading, error, backendConnected, lastScan, history, refresh: fetchData };
 }

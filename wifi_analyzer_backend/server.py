@@ -351,6 +351,49 @@ def get_diagnostics():
     diag.setdefault("route_hops",7)
     return diag
 
+
+def lookup_vendor(mac):
+    OUI = {
+        "B8:27:EB": "Raspberry Pi", "DC:A6:32": "Raspberry Pi", "E4:5F:01": "Raspberry Pi",
+        "00:17:88": "Philips Hue", "EC:FA:BC": "Apple", "F0:18:98": "Apple",
+        "AC:BC:32": "Apple", "A4:CF:99": "Apple", "00:1A:11": "Google",
+        "94:65:9C": "Google", "F4:F5:D8": "Google", "60:F1:89": "Xiaomi",
+        "00:9A:CD": "Huawei", "B4:86:55": "Samsung", "8C:77:12": "Samsung",
+        "00:50:F2": "Microsoft", "28:D2:44": "Microsoft", "DC:A4:CA": "Espressif",
+        "24:6F:28": "Espressif", "30:AE:A4": "Espressif", "FC:F5:C4": "Espressif",
+        "00:23:24": "Intel", "8C:EC:4B": "Intel", "AC:FD:CE": "TP-Link",
+        "50:C7:BF": "TP-Link", "14:EB:B6": "TP-Link", "08:00:27": "VirtualBox",
+        "00:0C:29": "VMware", "00:15:5D": "Microsoft Hyper-V",
+    }
+    return OUI.get(mac[:8].upper(), "")
+
+def get_hostname(ip):
+    try:
+        import socket
+        return socket.gethostbyaddr(ip)[0]
+    except:
+        return ""
+
+def get_devices():
+    devices = []
+    try:
+        out = subprocess.check_output(["arp", "-a"], stderr=subprocess.DEVNULL, timeout=10).decode("utf-8", "ignore")
+        if OS == "Windows":
+            for line in out.splitlines():
+                m = re.search(r"(\d+\.\d+\.\d+\.\d+)\s+([0-9a-f\-]{17})\s+(\S+)", line, re.I)
+                if m:
+                    ip, mac, flags = m.group(1), m.group(2).replace("-", ":").upper(), m.group(3)
+                    devices.append({"ip": ip, "mac": mac, "flags": flags, "vendor": lookup_vendor(mac), "hostname": ""})
+        else:
+            for line in out.splitlines():
+                m = re.search(r"\((\d+\.\d+\.\d+\.\d+)\)\s+at\s+([0-9a-f:]{17})", line, re.I)
+                if m:
+                    ip, mac = m.group(1), m.group(2).upper()
+                    devices.append({"ip": ip, "mac": mac, "flags": "C", "vendor": lookup_vendor(mac), "hostname": get_hostname(ip)})
+    except:
+        pass
+    return devices
+
 def get_system():
     info={"os":OS,"os_version":platform.version(),"hostname":platform.node(),
           "cpu_percent":psutil.cpu_percent(interval=0.1),"memory_percent":psutil.virtual_memory().percent}
@@ -410,6 +453,7 @@ class Handler(BaseHTTPRequestHandler):
             "/api/phy": get_phy,
             "/api/link": get_link,
             "/api/diagnostics": get_diagnostics,
+            "/api/devices": lambda: {"devices": get_devices()},
             "/health": lambda: {"status":"ok","os":OS},
         }
         if path in api_routes: self.send_json(api_routes[path]())
