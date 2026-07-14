@@ -124,3 +124,34 @@ sudo systemctl start wifi-analyzer
 
 ### v1.0.0
 - Initial release
+
+---
+
+## Demo Mode
+
+WiFi Analyzer Pro includes a **Demo Mode** that runs without any backend or root privileges. It uses realistic mock data so you can explore every tab and feature before installing anything. Once you run the Python backend, it automatically switches to live data.
+
+---
+
+## Pro Branding
+
+The "Pro" in WiFi Analyzer Pro reflects the enterprise-grade feature set — PHY layer stats, WPA3 detection, SNR/RSRQ/SINR metrics, band steering analysis, and AP deep scan — features typically only found in paid commercial tools.
+
+---
+
+## Support
+
+WiFi Analyzer Pro is provided **completely free of charge**, compiled and maintained by **Manit Arora**.
+
+If you find it useful, consider buying me a coffee:
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/manit6752025)
+
+---
+
+## Author
+
+**Manit Arora**
+- GitHub: [@manit6752025](https://github.com/manit6752025)
+- HackerOne: [irule675](https://hackerone.com/irule675)
+- Ko-fi: [ko-fi.com/manit6752025](https://ko-fi.com/manit6752025)
