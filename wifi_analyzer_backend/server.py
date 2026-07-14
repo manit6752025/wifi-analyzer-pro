@@ -172,6 +172,31 @@ def parse_airport(out):
         nets.append(enrich(n))
     return nets
 
+def parse_system_profiler(out):
+    nets = []
+    try:
+        data = json.loads(out)
+        ifaces = data.get("SPAirPortDataType", [])
+        for iface in ifaces:
+            for net in iface.get("spairport_airport_other_local_wireless_networks", []):
+                n = {}
+                n["ssid"] = net.get("_name", "")
+                n["bssid"] = net.get("spairport_network_bssid", "N/A").upper()
+                rssi_str = net.get("spairport_signal_noise", "").split(" / ")[0]
+                try: n["rssi"] = int(rssi_str.replace("dBm","").strip())
+                except: n["rssi"] = -80
+                ch_str = net.get("spairport_network_channel", "0")
+                try: n["channel"] = int(re.search(r"\d+", ch_str).group())
+                except: n["channel"] = 6
+                fmhz = ch_to_freq(n["channel"])
+                n["frequency"] = round(fmhz / 1000, 3)
+                n["band"] = "5GHz" if fmhz > 3000 else "2.4GHz"
+                n["security"] = net.get("spairport_security_mode", "Open")
+                n["security_detail"] = n["security"]
+                nets.append(enrich(n))
+    except: pass
+    return nets
+
 def parse_netsh(out):
     nets=[]
     for block in re.split(r"SSID \d+ :",out)[1:]:
