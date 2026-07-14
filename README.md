@@ -155,3 +155,21 @@ If you find it useful, consider buying me a coffee:
 - GitHub: [@manit6752025](https://github.com/manit6752025)
 - HackerOne: [irule675](https://hackerone.com/irule675)
 - Ko-fi: [ko-fi.com/manit6752025](https://ko-fi.com/manit6752025)
+
+---
+
+## Changelog summary
+
+### v1.0.2
+- New **Devices** tab — ARP table showing all devices on the network
+- MAC vendor lookup (Apple, Raspberry Pi, Espressif, TP-Link, Google etc)
+- Auto device type icons (phone, PC, Pi, IoT, unknown)
+- Gateway device highlighting
+- Works on Linux, macOS, Windows
+
+### v1.0.1
+- Full macOS live WiFi scanning via airport binary
+- Fallback to system_profiler for macOS 14+ (airport removed)
+
+### v1.0.0
+- Initial release
