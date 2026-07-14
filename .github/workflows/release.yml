@@ -11,12 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install and Build Frontend
+        run: |
+          npm install
+          npm run build
+
       - name: Build zip
         run: |
-          zip -r wifi-analyzer-pro-${{ github.ref_name }}.zip . \
-            -x "*/node_modules/*" \
-            -x "*/.git/*" \
-            -x "*.zip"
+          zip -r wifi-analyzer-pro-${{ github.ref_name }}.zip dist/ wifi_analyzer_backend/ install_windows.bat README.md
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
