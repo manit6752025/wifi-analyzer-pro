@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build zip
+        run: |
+          zip -r wifi-analyzer-pro-${{ github.ref_name }}.zip index.html package.json tailwind.config.js vite.config.js src/ wifi_analyzer_backend/ install_windows.bat README.md CHANGELOG.md
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: wifi-analyzer-pro-${{ github.ref_name }}.zip
