@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build zip
+        run: |
+          zip -r wifi-analyzer-pro-${{ github.ref_name }}.zip . \
+            -x "*/node_modules/*" \
+            -x "*/.git/*" \
+            -x "*.zip"
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: wifi-analyzer-pro-${{ github.ref_name }}.zip
