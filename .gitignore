@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.zip
+*.tar.gz
+__pycache__/
+*.pyc
+.env
+wifi_analyzer_backend/dist/
