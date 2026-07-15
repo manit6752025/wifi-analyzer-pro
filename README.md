@@ -8,16 +8,23 @@ Built by [@manit6752025](https://github.com/manit6752025)
 
 ## Features
 
-- **Network Scanner** — live scan with SSID, BSSID, RSSI, channel, band, security type, SNR, link speed
-- **AP Deep Scan** — per-access-point breakdown and analysis
-- **PHY Info** — physical layer stats from the wireless interface
-- **Link Stats** — TX/RX counters, retries, dropped packets
-- **Diagnostics** — latency, DNS resolution, gateway reachability
-- **Channel Chart** — visualise channel congestion across 2.4GHz and 5GHz
-- **Signal History** — live rolling chart of signal strength over time
-- **Heatmap** — grid-based signal heatmap
-- **Band Steering** — analysis panel for 2.4GHz vs 5GHz client distribution
-- **Demo Mode** — works without root/hardware using mock data
+- **Network Scanner** — live WiFi scanning with SSID, BSSID, RSSI, SNR, channel, frequency, security type and link speed
+- **AP Deep Scan** — detailed per-access-point analysis and wireless metrics
+- **PHY Information** — wireless interface capabilities, bitrate and physical layer statistics
+- **Link Statistics** — TX/RX counters, retries, dropped packets and throughput monitoring
+- **Diagnostics** — latency, DNS resolution, gateway reachability, packet loss and jitter analysis
+- **Devices** — discover all devices on the network with MAC vendor lookup, device identification and gateway highlighting
+- **Channel Congestion Analysis** — visualise channel usage across 2.4GHz and 5GHz bands
+- **Best Channel Recommendations** — automatically recommends the least congested WiFi channel
+- **Rogue AP Detection** — detect spoofed or untrusted access points using trusted SSID/BSSID verification
+- **Signal History** — live rolling graph of WiFi signal strength over time
+- **Packet Loss History** — historical packet loss, latency and jitter graphs from recent scans
+- **Heatmap** — grid-based WiFi signal strength heatmap for coverage analysis
+- **Band Steering Analysis** — compare client distribution across 2.4GHz and 5GHz bands
+- **Integrated Speed Test** — measure download and upload performance directly from the dashboard
+- **Responsive Modern UI** — glassmorphism interface with real-time updates and animated charts
+- **Cross Platform** — Linux, Raspberry Pi, Windows 11 and macOS support
+- **Demo Mode** — explore every feature using realistic mock data without requiring hardware or root privileges
 
 ---
 
@@ -27,28 +34,50 @@ Built by [@manit6752025](https://github.com/manit6752025)
 ```bash
 sudo bash wifi_analyzer_backend/setup.sh
 ```
-Open `http://<pi-ip>:199`
+
+Open:
+
+```
+http://<pi-ip>:199
+```
 
 ### Raspberry Pi — Standalone ARM64 Binary
+
 ```bash
 bash wifi_analyzer_backend/build_arm64_binary.sh
 sudo bash wifi_analyzer_backend/run_arm64.sh
 ```
-No Python needed on the target device after build.
+
+No Python installation is required on the target device after building.
 
 ### Windows 11
-Run `install_windows.bat` as Administrator, then open `http://localhost:199`
 
-### Manual
+Run:
+
 ```bash
-npm install && npm run build
+install_windows.bat
+```
+
+as **Administrator**, then open:
+
+```
+http://localhost:199
+```
+
+### Manual Installation
+
+```bash
+npm install
+npm run build
+
 cp -r dist wifi_analyzer_backend/dist
+
 sudo python3 wifi_analyzer_backend/server.py
 ```
 
 ---
 
-## Auto-start on Boot (Pi systemd)
+## Auto-start on Boot (Raspberry Pi systemd)
 
 ```bash
 sudo tee /etc/systemd/system/wifi-analyzer.service << EOF2
@@ -72,24 +101,43 @@ sudo systemctl start wifi-analyzer
 
 ---
 
-## API Endpoints (port 199)
+## API Endpoints
 
 | Endpoint | Description |
-|---|---|
-| `/api/scan` | WiFi network scan |
-| `/api/system` | CPU/RAM/OS info |
-| `/api/phy` | PHY layer stats |
-| `/api/link` | TX/RX counters |
-| `/api/diagnostics` | Latency/DNS/gateway |
+|-----------|-------------|
+| `/api/scan` | Live WiFi network scan |
+| `/api/system` | CPU, RAM and operating system information |
+| `/api/phy` | Wireless PHY statistics |
+| `/api/link` | TX/RX link statistics |
+| `/api/diagnostics` | Network diagnostics |
 | `/health` | Health check |
 
 ---
 
-## Stack
+## Technology Stack
 
-- **Frontend** — React, Vite, Tailwind CSS, Recharts, Framer Motion, Lucide
-- **Backend** — Python 3.8+, psutil, iw/iwconfig (Linux), pywifi (Windows)
-- **Platforms** — Linux, Raspberry Pi (ARM64), Windows 11
+### Frontend
+
+- React
+- Vite
+- Tailwind CSS
+- Recharts
+- Framer Motion
+- Lucide Icons
+
+### Backend
+
+- Python 3.8+
+- psutil
+- iw / iwconfig (Linux)
+- pywifi (Windows)
+
+### Supported Platforms
+
+- Linux
+- Raspberry Pi (ARM64)
+- Windows 11
+- macOS
 
 ---
 
@@ -97,53 +145,84 @@ sudo systemctl start wifi-analyzer
 
 - Python 3.8+
 - Node.js 18+
-- Root/Administrator privileges for live WiFi scanning
-
-## Platform Notes
-
-| Platform | Live Scanning | Demo Mode |
-|---|---|---|
-| Linux / Raspberry Pi | ✅ | ✅ |
-| Windows 11 | ✅ | ✅ |
-| macOS | ❌ (no iw) | ✅ |
+- Root / Administrator privileges for live WiFi scanning
 
 ---
 
-## Changelog summary
+## Platform Support
 
-### v1.0.2
-- New **Devices** tab — ARP table showing all devices on the network
-- MAC vendor lookup (Apple, Raspberry Pi, Espressif, TP-Link, Google etc)
-- Auto device type icons (phone, PC, Pi, IoT, unknown)
-- Gateway device highlighting
-- Works on Linux, macOS, Windows
-
-### v1.0.1
-- Full macOS live WiFi scanning via airport binary
-- Fallback to system_profiler for macOS 14+ (airport removed)
-
-### v1.0.0
-- Initial release
+| Platform | Live Scanning | Demo Mode |
+|----------|---------------|-----------|
+| Linux | ✅ | ✅ |
+| Raspberry Pi | ✅ | ✅ |
+| Windows 11 | ✅ | ✅ |
+| macOS | ✅ | ✅ |
 
 ---
 
 ## Demo Mode
 
-WiFi Analyzer Pro includes a **Demo Mode** that runs without any backend or root privileges. It uses realistic mock data so you can explore every tab and feature before installing anything. Once you run the Python backend, it automatically switches to live data.
+WiFi Analyzer Pro includes a fully functional **Demo Mode** that works without any backend, WiFi adapter or root privileges. It generates realistic wireless data, allowing you to explore every dashboard, chart and analysis tool before deploying to real hardware. Once the backend is running, the application automatically switches to live data.
 
 ---
 
 ## Pro Branding
 
-The "Pro" in WiFi Analyzer Pro reflects the enterprise-grade feature set — PHY layer stats, WPA3 detection, SNR/RSRQ/SINR metrics, band steering analysis, and AP deep scan — features typically only found in paid commercial tools.
+The **Pro** in WiFi Analyzer Pro reflects its enterprise-grade capabilities, including:
+
+- PHY layer statistics
+- WPA3 detection
+- Signal quality metrics
+- Channel congestion analysis
+- Rogue access point detection
+- Packet loss monitoring
+- Historical performance graphs
+- Band steering analysis
+- Device discovery
+- AP deep scan
+
+Features typically found only in commercial wireless analysis software.
+
+---
+
+## Changelog Summary
+
+### v1.0.4
+
+- Added Rogue AP Detection
+- Added Best Channel Recommendations
+- Added Packet Loss History graphs
+- Expanded advanced WiFi diagnostics
+
+### v1.0.3
+
+- Added integrated Speed Test
+- Performance improvements and UI refinements
+
+### v1.0.2
+
+- Added Devices tab
+- MAC vendor lookup
+- Automatic device type detection
+- Gateway highlighting
+- Cross-platform device discovery
+
+### v1.0.1
+
+- Added native macOS WiFi scanning
+- Added system_profiler fallback for macOS 14+
+
+### v1.0.0
+
+- Initial release
 
 ---
 
 ## Support
 
-WiFi Analyzer Pro is provided **completely free of charge**, compiled and maintained by **Manit Arora**.
+WiFi Analyzer Pro is completely **free and open source**, developed and maintained by **Manit Arora**.
 
-If you find it useful, consider buying me a coffee:
+If you find the project useful, consider supporting development:
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/manit6752025)
 
@@ -152,24 +231,7 @@ If you find it useful, consider buying me a coffee:
 ## Author
 
 **Manit Arora**
-- GitHub: [@manit6752025](https://github.com/manit6752025)
-- HackerOne: [irule675](https://hackerone.com/irule675)
-- Ko-fi: [ko-fi.com/manit6752025](https://ko-fi.com/manit6752025)
 
----
-
-## Changelog summary
-
-### v1.0.2
-- New **Devices** tab — ARP table showing all devices on the network
-- MAC vendor lookup (Apple, Raspberry Pi, Espressif, TP-Link, Google etc)
-- Auto device type icons (phone, PC, Pi, IoT, unknown)
-- Gateway device highlighting
-- Works on Linux, macOS, Windows
-
-### v1.0.1
-- Full macOS live WiFi scanning via airport binary
-- Fallback to system_profiler for macOS 14+ (airport removed)
-
-### v1.0.0
-- Initial release
+- GitHub: https://github.com/manit6752025
+- HackerOne: https://hackerone.com/irule675
+- Ko-fi: https://ko-fi.com/manit6752025
