@@ -394,6 +394,34 @@ def get_devices():
         pass
     return devices
 
+
+def run_speedtest():
+    try:
+        import urllib.request, time, threading
+        results = {"download": 0, "upload": 0, "ping": 0}
+
+        start = time.time()
+        urllib.request.urlopen("http://8.8.8.8", timeout=5)
+        results["ping"] = round((time.time() - start) * 1000, 1)
+
+        start = time.time()
+        with urllib.request.urlopen("https://speed.cloudflare.com/__down?bytes=10000000", timeout=30) as r:
+            size = len(r.read())
+        elapsed = time.time() - start
+        results["download"] = round((size * 8) / (elapsed * 1_000_000), 1)
+
+        import io
+        data = b"0" * 1_000_000
+        req = urllib.request.Request("https://speed.cloudflare.com/__up", data=data, method="POST")
+        start = time.time()
+        urllib.request.urlopen(req, timeout=30)
+        elapsed = time.time() - start
+        results["upload"] = round((len(data) * 8) / (elapsed * 1_000_000), 1)
+
+        return results
+    except Exception as e:
+        return {"download": 0, "upload": 0, "ping": 0, "error": str(e)}
+
 def get_system():
     info={"os":OS,"os_version":platform.version(),"hostname":platform.node(),
           "cpu_percent":psutil.cpu_percent(interval=0.1),"memory_percent":psutil.virtual_memory().percent}
@@ -454,6 +482,7 @@ class Handler(BaseHTTPRequestHandler):
             "/api/link": get_link,
             "/api/diagnostics": get_diagnostics,
             "/api/devices": lambda: {"devices": get_devices()},
+            "/api/speedtest": lambda: run_speedtest(),
             "/health": lambda: {"status":"ok","os":OS},
         }
         if path in api_routes: self.send_json(api_routes[path]())

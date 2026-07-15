@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RefreshCw, Wifi, Radio, BarChart2, Map, ArrowRightLeft, Terminal, Circle, Cpu, Activity, Globe, Search, Network } from 'lucide-react';
+import { RefreshCw, Wifi, Radio, BarChart2, Map, ArrowRightLeft, Terminal, Circle, Cpu, Activity, Globe, Search, Network, Zap, Download } from 'lucide-react';
 import useWifiData from '../hooks/useWifiData';
 import StatsBar from '../components/wifi/StatsBar';
 import NetworkCard from '../components/wifi/NetworkCard';
@@ -14,6 +14,7 @@ import LinkStatsPanel from '../components/wifi/LinkStatsPanel';
 import DiagnosticsPanel from '../components/wifi/DiagnosticsPanel';
 import APDeepScanPanel from '../components/wifi/APDeepScanPanel';
 import DeviceDiscoveryPanel from '../components/wifi/DeviceDiscoveryPanel';
+import SpeedTestPanel from '../components/wifi/SpeedTestPanel';
 
 const TABS = [
   { id: 'networks', label: 'Networks', icon: Wifi },
@@ -26,11 +27,20 @@ const TABS = [
   { id: 'heatmap', label: 'Heatmap', icon: Map },
   { id: 'band', label: 'Band Steering', icon: ArrowRightLeft },
   { id: 'devices', label: 'Devices', icon: Network },
+  { id: 'speedtest', label: 'Speed Test', icon: Zap },
 ];
 
 export default function WiFiAnalyzer() {
-  const { networks, congestion, systemInfo, phyInfo, linkStats, diagnostics, devices, loading, error, backendConnected, lastScan, history, refresh } = useWifiData(true, 5000);
+  const [refreshInterval, setRefreshInterval] = useState(5000);
+  const { networks, congestion, systemInfo, phyInfo, linkStats, diagnostics, devices, loading, error, backendConnected, lastScan, history, refresh } = useWifiData(true, refreshInterval);
   const [activeTab, setActiveTab] = useState('networks');
+
+  function exportData(fmt) {
+    const data = { timestamp: new Date().toISOString(), networks, devices };
+    const str = fmt === 'json' ? JSON.stringify(data, null, 2) : Object.keys(networks[0] || {}).join(',') + '\n' + networks.map(n => Object.values(n).join(',')).join('\n');
+    const blob = new Blob([str], { type: fmt === 'json' ? 'application/json' : 'text/csv' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `wifi-scan-${Date.now()}.${fmt}`; a.click();
+  }
   const [selectedNetwork, setSelectedNetwork] = useState(null);
   const [sortBy, setSortBy] = useState('rssi');
 
@@ -66,6 +76,18 @@ export default function WiFiAnalyzer() {
                   Run: python wifi_analyzer.py
                 </div>
               )}
+              <select value={refreshInterval} onChange={e => setRefreshInterval(Number(e.target.value))} className="px-3 py-2 rounded-xl bg-primary/10 border border-primary/30 text-primary text-sm font-medium">
+                <option value={5000}>5s</option>
+                <option value={10000}>10s</option>
+                <option value={30000}>30s</option>
+                <option value={0}>Manual</option>
+              </select>
+              <button onClick={() => exportData('csv')} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/30 text-primary text-sm font-medium hover:bg-primary/20 transition-all">
+                <Download className="w-3.5 h-3.5" /> CSV
+              </button>
+              <button onClick={() => exportData('json')} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/30 text-primary text-sm font-medium hover:bg-primary/20 transition-all">
+                <Download className="w-3.5 h-3.5" /> JSON
+              </button>
               <button onClick={refresh} disabled={loading} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/30 text-primary text-sm font-medium hover:bg-primary/20 transition-all disabled:opacity-50">
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">{loading ? 'Scanning...' : 'Scan'}</span>
@@ -165,6 +187,12 @@ export default function WiFiAnalyzer() {
                   <div className="glass rounded-xl p-5">
                     <h2 className="text-sm font-semibold text-foreground mb-4">Device Discovery — ARP Table</h2>
                     <DeviceDiscoveryPanel devices={devices} loading={loading && !devices} />
+                  </div>
+                )}
+                {activeTab === 'speedtest' && (
+                  <div className="glass rounded-xl p-5">
+                    <h2 className="text-sm font-semibold text-foreground mb-4">Speed Test</h2>
+                    <SpeedTestPanel />
                   </div>
                 )}
               </motion.div>
