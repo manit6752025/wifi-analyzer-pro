@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RefreshCw, Wifi, Radio, BarChart2, Map, ArrowRightLeft, Terminal, Circle, Cpu, Activity, Globe, Search, Network, Zap, Download } from 'lucide-react';
+import { RefreshCw, Wifi, Radio, BarChart2, Map, ArrowRightLeft, Terminal, Circle, Cpu, Activity, Globe, Search, Network, Zap, Download, ShieldAlert } from 'lucide-react';
 import useWifiData from '../hooks/useWifiData';
 import StatsBar from '../components/wifi/StatsBar';
 import NetworkCard from '../components/wifi/NetworkCard';
@@ -15,6 +15,9 @@ import DiagnosticsPanel from '../components/wifi/DiagnosticsPanel';
 import APDeepScanPanel from '../components/wifi/APDeepScanPanel';
 import DeviceDiscoveryPanel from '../components/wifi/DeviceDiscoveryPanel';
 import SpeedTestPanel from '../components/wifi/SpeedTestPanel';
+import RogueAPPanel from '../components/wifi/RogueAPPanel';
+import ChannelRecommendPanel from '../components/wifi/ChannelRecommendPanel';
+import PacketLossHistory from '../components/wifi/PacketLossHistory';
 
 const TABS = [
   { id: 'networks', label: 'Networks', icon: Wifi },
@@ -28,11 +31,18 @@ const TABS = [
   { id: 'band', label: 'Band Steering', icon: ArrowRightLeft },
   { id: 'devices', label: 'Devices', icon: Network },
   { id: 'speedtest', label: 'Speed Test', icon: Zap },
+  { id: 'rogue', label: 'Rogue AP', icon: ShieldAlert },
+  { id: 'recommend', label: 'Best Channel', icon: Radio },
+  { id: 'losshist', label: 'Loss History', icon: Activity },
 ];
 
 export default function WiFiAnalyzer() {
   const [refreshInterval, setRefreshInterval] = useState(5000);
+  const [diagHistory, setDiagHistory] = useState([]);
   const { networks, congestion, systemInfo, phyInfo, linkStats, diagnostics, devices, loading, error, backendConnected, lastScan, history, refresh } = useWifiData(true, refreshInterval);
+  React.useEffect(() => {
+    if (diagnostics) setDiagHistory(h => [...h.slice(-59), diagnostics]);
+  }, [diagnostics]);
   const [activeTab, setActiveTab] = useState('networks');
 
   function exportData(fmt) {
@@ -193,6 +203,24 @@ export default function WiFiAnalyzer() {
                   <div className="glass rounded-xl p-5">
                     <h2 className="text-sm font-semibold text-foreground mb-4">Speed Test</h2>
                     <SpeedTestPanel />
+                  </div>
+                )}
+                {activeTab === 'rogue' && (
+                  <div className="glass rounded-xl p-5">
+                    <h2 className="text-sm font-semibold text-foreground mb-4">Rogue AP Detection</h2>
+                    <RogueAPPanel networks={networks} />
+                  </div>
+                )}
+                {activeTab === 'recommend' && (
+                  <div className="glass rounded-xl p-5">
+                    <h2 className="text-sm font-semibold text-foreground mb-4">Channel Recommendation</h2>
+                    <ChannelRecommendPanel congestion={congestion} networks={networks} />
+                  </div>
+                )}
+                {activeTab === 'losshist' && (
+                  <div className="glass rounded-xl p-5">
+                    <h2 className="text-sm font-semibold text-foreground mb-4">Packet Loss History</h2>
+                    <PacketLossHistory diagnosticsHistory={diagHistory} />
                   </div>
                 )}
               </motion.div>
