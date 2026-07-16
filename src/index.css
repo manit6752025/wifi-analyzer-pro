@@ -1,60 +1,256 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+/* WiFi Analyzer Pro v1.0.5 — Global Styles & Animations */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    --background: 222 47% 5%;
-    --foreground: 210 40% 96%;
-    --card: 222 40% 8%;
-    --card-foreground: 210 40% 96%;
-    --popover: 222 40% 8%;
-    --popover-foreground: 210 40% 96%;
-    --primary: 188 100% 50%;
-    --primary-foreground: 222 47% 5%;
-    --secondary: 222 35% 12%;
-    --secondary-foreground: 210 40% 80%;
-    --muted: 222 35% 12%;
-    --muted-foreground: 215 20% 50%;
-    --accent: 263 70% 60%;
-    --accent-foreground: 210 40% 96%;
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 210 40% 96%;
-    --border: 222 30% 14%;
-    --input: 222 35% 12%;
-    --ring: 188 100% 50%;
-    --radius: 0.75rem;
-    --cyan: 188 100% 50%;
-    --purple: 263 70% 60%;
-  }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@layer base {
-  * { @apply border-border; }
-  body { @apply bg-background text-foreground font-inter antialiased; }
+:root {
+  --bg:       #070b14;
+  --card:     #0c1120;
+  --card2:    #111827;
+  --border:   #1e2d47;
+  --cyan:     #06d6f0;
+  --purple:   #a855f7;
+  --green:    #22c55e;
+  --yellow:   #f59e0b;
+  --red:      #ef4444;
+  --blue:     #3b82f6;
+  --text:     #e2e8f0;
+  --text-sec: #94a3b8;
+  --muted:    #64748b;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: hsl(var(--background)); }
-::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
-
-.glow-cyan { box-shadow: 0 0 20px hsla(188, 100%, 50%, 0.3); }
-
-.glass {
-  background: hsla(222, 40%, 8%, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid hsl(var(--border));
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-@keyframes pulse-signal { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-.pulse-signal { animation: pulse-signal 2s ease-in-out infinite; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--card); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2a3f65; }
 
-.grid-pattern {
-  background-image:
-    linear-gradient(hsla(188, 100%, 50%, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, hsla(188, 100%, 50%, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+/* ─── Keyframes ─── */
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%       { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes radarSweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes ripple {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(6, 214, 240, 0.3); }
+  50%       { box-shadow: 0 0 20px rgba(6, 214, 240, 0.7); }
+}
+
+@keyframes glowPurple {
+  0%, 100% { box-shadow: 0 0 6px rgba(168, 85, 247, 0.3); }
+  50%       { box-shadow: 0 0 20px rgba(168, 85, 247, 0.7); }
+}
+
+@keyframes scanLine {
+  0%   { top: 0; opacity: 0.9; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes borderPulse {
+  0%, 100% { border-color: rgba(6, 214, 240, 0.25); }
+  50%       { border-color: rgba(6, 214, 240, 0.7); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.8) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shakeLeft {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-4px); }
+  40%       { transform: translateX(4px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+
+/* ─── Utility animation classes ─── */
+
+.anim-fade      { animation: fadeSlideIn 0.32s ease both; }
+.anim-fade-d1   { animation: fadeSlideIn 0.32s 0.04s ease both; }
+.anim-fade-d2   { animation: fadeSlideIn 0.32s 0.08s ease both; }
+.anim-fade-d3   { animation: fadeSlideIn 0.32s 0.13s ease both; }
+.anim-fade-d4   { animation: fadeSlideIn 0.32s 0.18s ease both; }
+.anim-fade-d5   { animation: fadeSlideIn 0.32s 0.23s ease both; }
+.anim-slide-r   { animation: fadeSlideInRight 0.28s ease both; }
+.anim-count-up  { animation: countUp 0.4s cubic-bezier(.4,0,.2,1) both; }
+
+/* ─── Card hover ─── */
+
+.hover-card {
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.hover-card:hover {
+  transform: translateY(-1px);
+  border-color: #2a3f65 !important;
+}
+
+/* ─── Nav button ─── */
+
+.nav-btn {
+  transition: background 0.14s ease, color 0.14s ease;
+}
+.nav-btn:hover {
+  background: rgba(6, 214, 240, 0.07) !important;
+  color: var(--text-sec) !important;
+}
+.nav-btn.active {
+  background: rgba(6, 214, 240, 0.13) !important;
+  color: var(--cyan) !important;
+}
+
+/* ─── Tab content transition ─── */
+
+.tab-content {
+  animation: fadeSlideIn 0.26s ease both;
+}
+
+/* ─── Glow animations ─── */
+
+.glow-cyan   { animation: glow 2.5s ease-in-out infinite; }
+.glow-purple { animation: glowPurple 2.5s ease-in-out infinite; }
+
+/* ─── Signal bar ─── */
+
+.signal-bar-fill {
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Pulse dot ─── */
+
+.pulse-dot {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* ─── Scan ripple ─── */
+
+.scan-ripple {
+  animation: ripple 1.5s ease-out infinite;
+}
+.scan-ripple-2 {
+  animation: ripple 1.5s 0.5s ease-out infinite;
+}
+
+/* ─── Radar ─── */
+
+.radar-sweep {
+  transform-origin: 24px 24px;
+  animation: radarSweep 1.6s linear infinite;
+}
+
+/* ─── Border alert pulse ─── */
+
+.border-pulse-red {
+  animation: shakeLeft 0.4s ease both;
+  border-color: var(--red) !important;
+}
+.alert-border-pulse {
+  animation: borderPulse 2.5s ease-in-out infinite;
+}
+
+/* ─── Toast ─── */
+
+.toast-enter {
+  animation: fadeSlideInRight 0.25s ease both;
+}
+
+/* ─── Speed test ring ─── */
+
+.speed-ring {
+  transition: stroke-dasharray 0.065s linear, stroke 0.3s ease;
+}
+
+/* ─── Table row hover ─── */
+
+table tbody tr {
+  transition: background 0.13s ease;
+}
+table tbody tr:hover {
+  background: rgba(6, 214, 240, 0.03) !important;
+}
+
+/* ─── Button hover ─── */
+
+button:not(:disabled):hover {
+  filter: brightness(1.08);
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+/* ─── Input ─── */
+
+input::placeholder {
+  color: var(--muted);
+}
+select option {
+  background: var(--card2);
+  color: var(--text);
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .device-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .two-col { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 600px) {
+  .stat-grid   { grid-template-columns: 1fr !important; }
+  .device-grid { grid-template-columns: 1fr !important; }
+  .hide-mobile { display: none !important; }
 }

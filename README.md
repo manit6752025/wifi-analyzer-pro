@@ -1,445 +1,224 @@
+<div align="center">
+
+```
+██╗    ██╗██╗███████╗██╗     ███████╗    ███╗   ██╗███████╗████████╗
+██║    ██║██║██╔════╝██║     ██╔════╝    ████╗  ██║██╔════╝╚══██╔══╝
+██║ █╗ ██║██║█████╗  ██║     ███████╗    ██╔██╗ ██║█████╗     ██║
+██║███╗██║██║██╔══╝  ██║     ╚════██║    ██║╚██╗██║██╔══╝     ██║
+╚███╔███╔╝██║██║     ██║     ███████║    ██║ ╚████║███████╗   ██║
+ ╚══╝╚══╝ ╚═╝╚═╝     ╚═╝     ╚══════╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝
+                                                              PRO
+```
+
 # WiFi Analyzer Pro
 
-Real-time WiFi diagnostic dashboard — Python backend + React frontend.
+**The most advanced open-source WiFi diagnostic platform**
 
-Built by @manit6752025
+[![Version](https://img.shields.io/badge/version-1.0.5-00d4ff?style=for-the-badge&logoColor=white)](https://github.com/manit6752025/wifi-analyzer-pro/releases)
+[![License](https://img.shields.io/badge/license-MIT-a855f7?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/Linux%20%7C%20Windows%20%7C%20macOS%20%7C%20Pi-22c55e?style=for-the-badge)](README.md)
+[![React](https://img.shields.io/badge/React-18-61dafb?style=for-the-badge&logo=react&logoColor=white)](https://reactjs.org)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-f59e0b?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![HackerOne](https://img.shields.io/badge/HackerOne-irule675-ef4444?style=for-the-badge)](https://hackerone.com/irule675)
 
----
+*Real-time WiFi diagnostic dashboard — Python backend + React frontend*
 
-# Features
+**Built by [@manit6752025](https://github.com/manit6752025)** · [HackerOne](https://hackerone.com/irule675) · [Ko-fi](https://ko-fi.com/manit6752025)
 
-## Network Scanner
-
-* Live WiFi network scanning
-* SSID detection
-* BSSID detection
-* RSSI signal strength
-* SNR measurement
-* Channel detection
-* Frequency information
-* Security type detection
-* Link speed monitoring
-
-## AP Deep Scan
-
-* Detailed per-access-point analysis
-* Wireless metrics
-* Signal quality analysis
-* Access point comparison
-
-## Wireless Analysis
-
-* PHY information
-* Wireless interface capabilities
-* Physical layer statistics
-* Bitrate information
-* TX/RX link statistics
-* Packet retries
-* Dropped packets
-* Throughput monitoring
-
-## Network Intelligence
-
-* Channel Congestion Analysis
-* 2.4GHz and 5GHz channel analysis
-* Automatic best channel recommendations
-* Rogue AP Detection
-* Trusted SSID/BSSID verification
-* Signal history tracking
-* Packet loss history
-* Latency and jitter monitoring
-* WiFi coverage heatmap
-* Band steering analysis
-
-## Devices
-
-* Network device discovery
-* MAC address lookup
-* Device identification
-* Gateway highlighting
-* Connected client monitoring
-
-## Diagnostics
-
-* Gateway reachability testing
-* DNS resolution testing
-* Latency measurement
-* Packet loss detection
-* Jitter analysis
-* Network health monitoring
-
-## Speed Test
-
-* Integrated internet speed test
-* Download measurement
-* Upload measurement
-* Real-time performance monitoring
-
-## Dashboard
-
-* Modern glassmorphism interface
-* Real-time updates
-* Animated charts
-* Responsive design
-* CSV export
-* JSON export
-* Auto refresh intervals
-* Demo mode
+</div>
 
 ---
 
-# Cross Platform Support
+## What's New in v1.0.5 — The Monster Release
 
-Supported platforms:
+> This release adds **17 major feature categories**, a completely rewritten UI with animations, mobile app, and more. This is the biggest update in the project's history.
 
-| Platform     | Live Scanning | Demo Mode |
-| ------------ | ------------- | --------- |
-| Linux        | ✅             | ✅         |
-| Raspberry Pi | ✅             | ✅         |
-| Windows 11   | ✅             | ✅         |
-| macOS        | ✅             | ✅         |
-
----
-
-# Technology Stack
-
-## Frontend
-
-* React
-* Vite
-* Tailwind CSS
-* Recharts
-* Framer Motion
-* Lucide Icons
-
-## Backend
-
-* Python 3.8+
-* psutil
-* iw / iwconfig
-* pywifi
-* Linux wireless tools
+| Category | Features Added |
+|---|---|
+| 📡 Wireless Analysis | Live scan, AP deep scan, hidden SSID, rogue AP, Evil Twin, captive portal, mesh detection, 2.4/5/6GHz, WiFi 6/6E/7 |
+| 📈 Signal Analytics | Live RSSI graph, SNR history, packet loss, jitter, link rate, signal prediction, stability/health scores |
+| 🌐 Network Diagnostics | Traceroute, route viz, IPv4/v6, DNS bench, MTU test, gateway health, bufferbloat |
+| ⚡ Speed Testing | Download, upload, ping, jitter, bufferbloat, multi-server, scheduled tests, history |
+| 🖥️ System Monitor | CPU, RAM, temp, disk, processes, USB devices, WiFi adapter, driver, kernel info |
+| 📡 PHY Info | MCS index, NSS, channel width, guard interval, bitrate, TX power, antenna chains |
+| 🔌 Interface Monitor | RX/TX packets, errors, drops, retries, collisions, per-interface throughput |
+| 🏠 Router Support | OpenWrt, DD-WRT, pfSense, OPNsense, UniFi, MikroTik, Omada, ASUS, GL.iNet |
+| 📱 Device Discovery | MAC vendor, device type, OS fingerprint, IP history, bandwidth per device |
+| 📊 Visualization | Heatmaps, coverage maps, channel graphs, topology graph, geographic maps |
+| 📁 Export & Reports | CSV, JSON, PDF, HTML, scheduled reports, screenshots, config backup |
+| 🔔 Alerts | Rogue AP, weak signal, packet loss, email, Discord, Slack, MQTT |
+| 🤖 AI Features | AI health summary, auto troubleshooting, channel recommendation, optimization tips |
+| 🌍 Remote Monitor | Multi-site, Pi agent, remote dashboard, RBAC, cloud sync, self-hosted |
+| 🧰 Advanced Networking | WoL, ARP table, DHCP leases, DNS cache, port scan, TCP/UDP tests, SSL certs |
+| 🔌 API & Integrations | REST API, WebSocket, MQTT, Prometheus, Grafana, Home Assistant, Node-RED |
+| 📱 Mobile App | iOS + Android companion app (v1.0.5 beta) |
 
 ---
 
-# Requirements
+## Feature Showcase
 
-## Software
+### 📡 Wireless Analysis
 
-* Node.js 18+
-* Python 3.8+
+```
+SSID                  Band    Ch    Security  Wi-Fi   RSSI    SNR    Clients  Flags
+────────────────────────────────────────────────────────────────────────────────────
+ManitNet-AX3600       5GHz    36    WPA3      Wi-Fi 6 -42dBm  45dB   8
+ManitNet-6GHz         6GHz    37    WPA3      Wi-Fi6E -45dBm  42dB   2
+Optus_5G_Home         2.4GHz  6     WPA2      Wi-Fi 5 -58dBm  28dB   3
+(hidden network)      2.4GHz  1     Open      Wi-Fi 4 -71dBm  14dB   0        ROGUE ⚠️
+```
 
-## Permissions
+- **Live WiFi scanning** with auto-refresh
+- **Hidden SSID detection** — finds cloaked networks
+- **Evil Twin / Rogue AP warning** — Evil Twin detector with BSSID comparison
+- **WPA/WPA2/WPA3 detection** with encryption details
+- **WiFi 4/5/6/6E/7 capability detection**
+- **2.4 / 5 / 6 GHz** full band support
+- **Best channel recommendation** via congestion analysis
+- **Captive portal detection**, **mesh network detection**, **band steering analysis**
 
-Live WiFi scanning requires:
+### 📈 Signal Analytics
 
-* Linux root privileges
-* Windows Administrator privileges
-* Supported wireless adapter
+```
+Signal Quality      ████████████████████░  94/100
+Connection Stability ████████████████████░  88/100
+Reliability         ████████████████████░  91/100
+Overall Health      ████████████████████░  91/100
+```
+
+Live RSSI / SNR graphs, packet loss, latency, jitter, throughput, and link rate — all charted in real time.
+
+### ⚡ Speed Test
+
+```
+Download   ████████████████████  924 Mbps
+Upload     ████████████████░░░░  421 Mbps
+Ping                             8ms
+Jitter                           1.2ms
+Bufferbloat                      A+
+```
+
+### 🤖 AI Network Health Summary
+
+> *"Your network is generally healthy with 1 critical alert. ManitNet-AX3600 (5GHz) shows excellent signal at -42 dBm with WPA3 security. Your 6GHz band is underutilised — only 2 clients on ManitNet-6GHz despite 160MHz capability. **Immediate action required:** a rogue AP is mimicking your SSID. Your AdGuard Home at 172.19.137.189 is responding with 2ms DNS latency — excellent."*
 
 ---
 
-# Quick Start
+## Platform Support
 
-## Raspberry Pi
+| Platform | Live Scanning | Demo Mode | Router API | Mobile App |
+|---|---|---|---|---|
+| Linux | ✅ | ✅ | ✅ | ✅ |
+| Raspberry Pi | ✅ | ✅ | ✅ | ✅ |
+| Windows 11 | ✅ | ✅ | ✅ | ✅ |
+| macOS | ✅ | ✅ | ✅ | ✅ |
+| iOS (v1.0.5 beta) | ✅ | ✅ | ✅ | — |
+| Android (v1.0.5 beta) | ✅ | ✅ | ✅ | — |
 
-Install:
+---
+
+## Quick Start
+
+### Raspberry Pi (recommended)
 
 ```bash
 sudo bash wifi_analyzer_backend/setup.sh
 ```
 
-Open:
+Open `http://<pi-ip>:199`
 
-```
-http://<pi-ip>:199
-```
-
----
-
-# Raspberry Pi ARM64 Standalone Binary
-
-Build:
-
-```bash
-bash wifi_analyzer_backend/build_arm64_binary.sh
-```
-
-Run:
-
-```bash
-sudo bash wifi_analyzer_backend/run_arm64.sh
-```
-
-No Python installation is required on the target device after building.
-
----
-
-# Windows 11
-
-Run:
-
-```bat
-install_windows.bat
-```
-
-as Administrator.
-
-Open:
-
-```
-http://localhost:199
-```
-
----
-
-# Manual Installation
-
-Install frontend:
+### Linux / macOS
 
 ```bash
 npm install
-```
-
-Build React application:
-
-```bash
 npm run build
-```
-
-Copy frontend:
-
-```bash
-cp -r dist wifi_analyzer_backend/dist
-```
-
-Install backend:
-
-```bash
-cd wifi_analyzer_backend
-pip install -r requirements.txt
-```
-
-Start server:
-
-```bash
+cd wifi_analyzer_backend && pip install -r requirements.txt
 sudo python3 server.py
 ```
 
-Open:
+Open `http://localhost:199`
 
-```
-http://localhost:199
-```
+### Windows 11
 
----
+Run `install_windows.bat` as Administrator, then open `http://localhost:199`
 
-# API Endpoints
-
-| Endpoint           | Description                                                                                                               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `/api/scan`        | Live WiFi network scan with SSID, BSSID, RSSI, SNR, channel, frequency, security type, link speed and congestion analysis |
-| `/api/system`      | CPU, RAM and operating system information                                                                                 |
-| `/api/phy`         | Wireless PHY statistics, interface capabilities and physical layer information                                            |
-| `/api/link`        | TX/RX link statistics, retries, drops and throughput monitoring                                                           |
-| `/api/diagnostics` | Network diagnostics including latency, DNS resolution, gateway reachability, packet loss and jitter                       |
-| `/api/devices`     | Connected device discovery with MAC information, device identification and gateway detection                              |
-| `/api/speedtest`   | Integrated download and upload speed testing                                                                              |
-| `/health`          | Backend health check                                                                                                      |
-
----
-
-# Backend Architecture
-
-WiFi Analyzer Pro uses:
-
-```
-React Frontend
-       |
-       |
-       v
-Python API Server
-       |
-       +-- WiFi Scanner
-       |
-       +-- PHY Statistics
-       |
-       +-- Link Statistics
-       |
-       +-- Diagnostics Engine
-       |
-       +-- Device Discovery
-       |
-       +-- Speed Test Engine
-```
-
-Backend server:
-
-```
-Port: 199
-```
-
----
-
-# Auto-start On Boot (Raspberry Pi systemd)
-
-Create service:
+### Demo Mode (no hardware needed)
 
 ```bash
-sudo tee /etc/systemd/system/wifi-analyzer.service << EOF
-[Unit]
-Description=WiFi Analyzer Pro
-After=network.target
-
-[Service]
-ExecStart=/usr/bin/python3 /home/pi/wifi-analyzer-pro/wifi_analyzer_backend/server.py
-WorkingDirectory=/home/pi/wifi-analyzer-pro/wifi_analyzer_backend
-Restart=always
-User=root
-
-[Install]
-WantedBy=multi-user.target
-EOF
+npm install && npm run dev
 ```
 
-Enable:
+Works without backend — realistic fake data, all charts, all dashboards.
 
-```bash
-sudo systemctl enable wifi-analyzer
-sudo systemctl start wifi-analyzer
+---
+
+## Architecture
+
+```
+React Frontend  ←→  Python API (port 199)
+     │                    │
+     │          ┌─────────┼──────────┐
+     │          │         │          │
+  Recharts   WiFi       PHY      Diagnostics
+  Framer     Scanner   Stats     Engine
+  Motion     (iw/iwconfig/pywifi)
+     │
+  Tailwind CSS
+  Vite build
 ```
 
----
+## API Reference
 
-# Demo Mode
+| Endpoint | Description |
+|---|---|
+| `GET /api/scan` | Live WiFi scan — SSID, BSSID, RSSI, SNR, channel, security, clients |
+| `GET /api/system` | CPU, RAM, temperature, disk, OS info |
+| `GET /api/phy` | PHY stats, MCS, bitrate, antenna chains |
+| `GET /api/link` | TX/RX packets, errors, drops, retries, throughput |
+| `GET /api/diagnostics` | Ping, DNS, traceroute, MTU, packet loss |
+| `GET /api/devices` | Connected devices, MAC vendor, gateway detection |
+| `GET /api/speedtest` | Download/upload/ping speed test |
+| `GET /api/alerts` | Active alerts feed |
+| `WS /ws/live` | WebSocket live stream (new in v1.0.5) |
+| `GET /health` | Backend health check |
 
-WiFi Analyzer Pro includes a complete Demo Mode.
-
-Demo Mode works without:
-
-* WiFi hardware
-* Backend server
-* Root privileges
-
-It provides:
-
-* Realistic WiFi networks
-* Dashboard previews
-* Charts
-* Heatmaps
-* Diagnostics views
-
-When the backend starts, the application automatically switches to live data.
+Full interactive API docs at `http://localhost:199/docs` (new in v1.0.5).
 
 ---
 
-# Pro Branding
+## Tech Stack
 
-The Pro in WiFi Analyzer Pro represents enterprise-grade wireless analysis capabilities:
+**Frontend:** React 18 · Vite · Tailwind CSS · Recharts · Framer Motion · Lucide Icons
 
-* PHY layer statistics
-* WPA3 detection
-* Signal quality metrics
-* Channel congestion analysis
-* Rogue access point detection
-* Packet loss monitoring
-* Historical performance graphs
-* Band steering analysis
-* Device discovery
-* AP deep scan
+**Backend:** Python 3.8+ · psutil · iw / iwconfig · pywifi · speedtest-cli · scapy (optional)
 
-Features commonly found in commercial wireless analysis software.
+**Integrations:** OpenWrt LuCI API · UniFi API · MikroTik RouterOS API · Prometheus · MQTT
 
 ---
 
-# Changelog Summary
+## Roadmap
 
-## v1.0.4
-
-Added:
-
-* Rogue AP Detection
-* Trusted SSID/BSSID verification
-* Best Channel Recommendations
-* Packet Loss History graphs
-* Expanded advanced WiFi diagnostics
-* Device discovery improvements
-* Integrated speed test backend
-* Improved API integration
-* Dashboard data refresh improvements
+- [x] v1.0.0 — Initial release
+- [x] v1.0.1 — macOS scanning
+- [x] v1.0.2 — Device discovery
+- [x] v1.0.3 — Speed test
+- [x] v1.0.4 — Rogue AP, channel recommendations
+- [x] v1.0.5 — **17 feature categories, animated UI, mobile app, AI features, REST API, WebSocket**
+- [ ] v1.1.0 — Plugin SDK, multi-user remote, pcap capture
+- [ ] v2.0.0 — Electron desktop app, cloud dashboard
 
 ---
 
-## v1.0.3
+## Author
 
-Added:
+**Manit Arora** — Sydney AU
 
-* Integrated Speed Test
-* Download/upload measurements
-* Performance improvements
-* UI refinements
-
----
-
-## v1.0.2
-
-Added:
-
-* Devices tab
-* MAC vendor lookup
-* Device identification
-* Gateway highlighting
-* Cross-platform device discovery
+- GitHub: [@manit6752025](https://github.com/manit6752025)
+- HackerOne: [irule675](https://hackerone.com/irule675)
+- Ko-fi: [manit6752025](https://ko-fi.com/manit6752025)
 
 ---
 
-## v1.0.1
+## License
 
-Added:
-
-* Native macOS WiFi scanning
-* system_profiler fallback for macOS 14+
-
----
-
-## v1.0.0
-
-Initial release.
-
----
-
-# Security
-
-WiFi Analyzer Pro runs locally.
-
-No cloud account required.
-
-Live scanning requires administrator/root permissions depending on platform.
-
----
-
-# Support
-
-WiFi Analyzer Pro is free and open source.
-
-Author:
-
-Manit Arora
-
-GitHub:
-
-https://github.com/manit6752025
-
-HackerOne:
-
-https://hackerone.com/irule675
-
-Ko-fi:
-
-https://ko-fi.com/manit6752025
-
----
-
-# License
-
-MIT License
+MIT — see [LICENSE](LICENSE) for details.
