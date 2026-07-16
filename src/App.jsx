@@ -861,6 +861,56 @@ export default function App() {
   const [toasts,setToasts]=useState([]);
   const [rssiData]=useState(genRSSI);
   const [speedData]=useState(genSpeed);
+  const [liveMode,setLiveMode]=useState(false);
+  const [liveNets,setLiveNets]=useState(null);
+  const [liveDevs,setLiveDevs]=useState(null);
+  const [liveSystem,setLiveSystem]=useState(null);
+  const [liveDiag,setLiveDiag]=useState(null);
+  const [checking,setChecking]=useState(true);
+
+  useEffect(()=>{
+    async function autoDetect(){
+      try{
+        const r=await fetch("http://localhost:199/api/has_wifi",{signal:AbortSignal.timeout(3000)});
+        const d=await r.json();
+        if(d.has_wifi){
+          setLiveMode(true);
+          const [sr,dr,sysr,diagr]=await Promise.all([
+            fetch("http://localhost:199/api/scan"),
+            fetch("http://localhost:199/api/devices"),
+            fetch("http://localhost:199/api/system"),
+            fetch("http://localhost:199/api/diagnostics"),
+          ]);
+          const sd=await sr.json();const dd=await dr.json();
+          const syd=await sysr.json();const dg=await diagr.json();
+          if(sd.networks?.length)setLiveNets(sd.networks);
+          if(dd.devices?.length)setLiveDevs(dd.devices);
+          if(syd)setLiveSystem(syd);
+          if(dg)setLiveDiag(dg);
+        }
+      }catch(_){}
+      setChecking(false);
+    }
+    autoDetect();
+    const iv=setInterval(async()=>{
+      if(!liveMode)return;
+      try{
+        const [r,dr,dg]=await Promise.all([
+          fetch("http://localhost:199/api/scan"),
+          fetch("http://localhost:199/api/devices"),
+          fetch("http://localhost:199/api/diagnostics"),
+        ]);
+        const d=await r.json();const dd=await dr.json();const diag=await dg.json();
+        if(d.networks?.length)setLiveNets(d.networks);
+        if(dd.devices?.length)setLiveDevs(dd.devices);
+        if(diag)setLiveDiag(diag);
+      }catch(_){}
+    },10000);
+    return()=>clearInterval(iv);
+  },[]);
+
+  const networks=liveNets||NETWORKS;
+  const devices=liveDevs||DEVICES;
 
   const addToast=(msg,type="info")=>{
     const id=Date.now();
