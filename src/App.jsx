@@ -230,14 +230,16 @@ function Toast({ toasts, dismiss }) {
   );
 }
 
-function DashboardPanel({ rssiData, speedData }) {
+function DashboardPanel({ rssiData, speedData, networks: netsProp, devices: devsProp, diag }) {
   return (
     <div style={{...s.col,gap:14}}>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
-        <Stat label="Networks Found" value="7" sub="2×6GHz · 1 rogue detected" col={C.cyan}   Icon={Wifi}       delay={1}/>
-        <Stat label="Signal Strength" value="-42 dBm" sub="Excellent · SNR 45 dB"  col={C.green}  Icon={Signal}     delay={2}/>
-        <Stat label="Internet Speed" value="924 Mbps" sub="↑ 421 Mbps upload"       col={C.purple} Icon={Zap}        delay={3}/>
-        <Stat label="Devices Online" value="5 / 6" sub="1 unknown flagged ⚠️"       col={C.yellow} Icon={Smartphone} delay={4}/>
+        {(()=>{const nets=netsProp||NETWORKS;const devs=devsProp||DEVICES;const best=nets.length?[...nets].sort((a,b)=>b.rssi-a.rssi)[0]:null;return(<>
+        <Stat label="Networks Found" value={nets.length} sub={nets.filter(n=>n.rogue).length>0?`${nets.filter(n=>n.rogue).length} rogue detected`:"All clear"} col={C.cyan} Icon={Wifi} delay={1}/>
+        <Stat label="Signal Strength" value={best?`${best.rssi} dBm`:"N/A"} sub={best?`${best.ssid} · ${best.band}`:"No scan"} col={C.green} Icon={Signal} delay={2}/>
+        <Stat label="Packet Loss" value={diag?`${diag.packet_loss_pct||0}%`:"—"} sub={diag?`Latency: ${diag.latency_ms||0}ms`:"Backend required"} col={diag&&(diag.packet_loss_pct||0)===0?C.green:C.yellow} Icon={Zap} delay={3}/>
+        <Stat label="Devices Online" value={`${devs.filter(d=>d.online!==false).length} / ${devs.length}`} sub={devs.filter(d=>!d.vendor||d.vendor==="???").length>0?"Unknown device flagged":"All identified"} col={C.yellow} Icon={Smartphone} delay={4}/>
+        </>);})()}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1.4fr 1fr",gap:10}}>
         <div className="hover-card anim-fade-d2" style={s.card}>
@@ -279,7 +281,7 @@ function DashboardPanel({ rssiData, speedData }) {
       <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10}}>
         <div className="hover-card anim-fade-d3" style={s.card}>
           <SHdr title="Nearby Networks" sub="7 found · best ch: 36 (5GHz)"/>
-          {NETWORKS.slice(0,4).map((n,i)=>(
+          {(netsProp||NETWORKS).slice(0,4).map((n,i)=>(
             <div key={i} style={{...s.bet,padding:"7px 0",borderBottom:i<3?`1px solid ${C.border}44`:"none"}}>
               <div style={{...s.row,gap:7}}>
                 {n.rogue&&<AlertTriangle size={11} color={C.red}/>}
@@ -308,23 +310,24 @@ function DashboardPanel({ rssiData, speedData }) {
   );
 }
 
-function WirelessPanel() {
+function WirelessPanel({ networks: netsProp }) {
   const [filter,setFilter]=useState("");
   const [sort,setSort]=useState("rssi");
-  const nets=[...NETWORKS]
+  const NETS = netsProp || NETWORKS;
+  const nets=[...NETS]
     .filter(n=>n.ssid.toLowerCase().includes(filter.toLowerCase())||n.bssid.toLowerCase().includes(filter.toLowerCase()))
     .sort((a,b)=>sort==="rssi"?a.rssi-b.rssi:sort==="snr"?b.snr-a.snr:a.ch-b.ch);
   return (
     <div style={{...s.col,gap:14}}>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
-        <Stat label="APs Found" value="7" sub="3×5GHz · 1×6GHz · 3×2.4GHz" col={C.cyan}   Icon={Wifi}  delay={1}/>
-        <Stat label="Rogue APs" value="1" sub="Evil Twin active — investigate" col={C.red}    Icon={Shield} delay={2}/>
-        <Stat label="Best Channel" value="Ch 36" sub="5GHz · 22% utilisation"     col={C.green} Icon={ScanLine} delay={3}/>
-        <Stat label="WiFi 6 / 6E" value="3 APs" sub="160MHz capable"              col={C.purple} Icon={Rss} delay={4}/>
+        <Stat label="APs Found" value={NETS.length} sub={`${NETS.filter(n=>n.band==="5GHz").length}×5GHz · ${NETS.filter(n=>n.band==="2.4GHz").length}×2.4GHz`} col={C.cyan} Icon={Wifi} delay={1}/>
+        <Stat label="Rogue APs" value={NETS.filter(n=>n.rogue).length} sub={NETS.filter(n=>n.rogue).length>0?"Evil Twin active — investigate":"None detected"} col={NETS.filter(n=>n.rogue).length>0?C.red:C.green} Icon={Shield} delay={2}/>
+        <Stat label="Best Channel" value={`Ch ${NETS.length?[...NETS].sort((a,b)=>a.rssi-b.rssi)[0]?.ch||36:36}`} sub="Least congested" col={C.green} Icon={ScanLine} delay={3}/>
+        <Stat label="Strongest" value={`${NETS.length?Math.max(...NETS.map(n=>n.rssi)):-42} dBm`} sub={NETS.length?[...NETS].sort((a,b)=>b.rssi-a.rssi)[0]?.ssid||"":"No scan"} col={C.purple} Icon={Rss} delay={4}/>
       </div>
       <div className="anim-fade-d2" style={s.card}>
         <div style={{...s.bet,marginBottom:12}}>
-          <SHdr title="Live WiFi Scan" sub="Auto-refresh every 10s · 7 networks"/>
+          <SHdr title="Live WiFi Scan" sub={`Auto-refresh every 10s · ${nets.length} networks`}/>
           <div style={{...s.row,gap:8}}>
             <div style={{...s.row,gap:6,background:C.card2,border:`1px solid ${C.border}`,borderRadius:7,padding:"5px 10px"}}>
               <Search size={12} color={C.muted}/>
@@ -475,18 +478,26 @@ function SpeedPanel({ speedData }) {
   const [running,setRunning]=useState(false);
   const [pct,setPct]=useState(0);
   const [phase,setPhase]=useState("idle");
-  const run=()=>{
+  const [realDl,setRealDl]=useState(null);
+  const [realUl,setRealUl]=useState(null);
+  const [realPing,setRealPing]=useState(null);
+  const run=async()=>{
     if(running)return;
-    setRunning(true);setPct(0);setPhase("download");
+    setRunning(true);setPct(0);setPhase("download");setRealDl(null);setRealUl(null);setRealPing(null);
     let p=0;
-    const t=setInterval(()=>{
-      p+=2.5;setPct(p);
-      if(p>=50) setPhase("upload");
-      if(p>=100){clearInterval(t);setRunning(false);setPhase("done");}
-    },60);
+    const t=setInterval(()=>{p+=1;setPct(p);if(p>=50)setPhase("upload");if(p>=99){clearInterval(t);}},120);
+    try{
+      const r=await fetch("http://localhost:199/api/speedtest",{signal:AbortSignal.timeout(60000)});
+      const d=await r.json();
+      clearInterval(t);setPct(100);setPhase("done");
+      setRealDl(d.download);setRealUl(d.upload);setRealPing(d.ping);
+    }catch{
+      clearInterval(t);setPct(100);setPhase("done");
+    }
+    setRunning(false);
   };
-  const dlVal=running?(pct/100*924).toFixed(0):924;
-  const ulVal=running&&pct>50?((pct-50)/50*421).toFixed(0):(!running&&phase==="done"?421:0);
+  const dlVal=phase==="done"&&realDl!=null?realDl:running?(pct/100*924).toFixed(0):924;
+  const ulVal=phase==="done"&&realUl!=null?realUl:running&&pct>50?((pct-50)/50*421).toFixed(0):(phase==="done"?421:0);
   return (
     <div style={{...s.col,gap:14}}>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
@@ -554,19 +565,20 @@ function SpeedPanel({ speedData }) {
   );
 }
 
-function DevicesPanel() {
+function DevicesPanel({ devices: devsProp }) {
+  const DEVS = devsProp || DEVICES;
   const ICONS={Router:Server,Laptop:Monitor,Server:Database,Wearable:Eye,IoT:Rss,Unknown:AlertTriangle};
   const COLS ={Router:C.cyan,Laptop:C.blue,Server:C.purple,Wearable:C.green,IoT:C.yellow,Unknown:C.red};
   return (
     <div style={{...s.col,gap:14}}>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
-        <Stat label="Devices Found"   value="6"        sub="5 online · 1 offline"        col={C.cyan}   Icon={Smartphone}   delay={1}/>
-        <Stat label="Total Bandwidth" value="51.4 Mbps" sub="Across all devices"           col={C.purple} Icon={Activity}      delay={2}/>
-        <Stat label="New Devices"     value="1"        sub="Galaxy Watch 6 · 12m ago"     col={C.green}  Icon={CheckCircle}   delay={3}/>
-        <Stat label="Flagged"         value="1"        sub="Unknown MAC vendor"            col={C.red}    Icon={AlertTriangle} delay={4}/>
+        <Stat label="Devices Found"   value={DEVS.length} sub={`${DEVS.filter(d=>d.online!==false).length} online · ${DEVS.filter(d=>d.online===false).length} offline`} col={C.cyan} Icon={Smartphone} delay={1}/>
+        <Stat label="Gateway"         value={DEVS.find(d=>d.gw)?.ip||"N/A"} sub={DEVS.find(d=>d.gw)?.vendor||""} col={C.purple} Icon={Activity} delay={2}/>
+        <Stat label="Vendors Found"   value={[...new Set(DEVS.map(d=>d.vendor).filter(Boolean))].length} sub="Unique manufacturers" col={C.green} Icon={CheckCircle} delay={3}/>
+        <Stat label="Unknown"         value={DEVS.filter(d=>!d.vendor||d.vendor==="???").length} sub="Unidentified MAC vendor" col={C.red} Icon={AlertTriangle} delay={4}/>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
-        {DEVICES.map((d,i)=>{
+        {DEVS.map((d,i)=>{
           const Icon=ICONS[d.type]||Smartphone;
           const col=COLS[d.type]||C.muted;
           return (
@@ -675,12 +687,16 @@ function AlertsPanel() {
   );
 }
 
-function SystemPanel() {
+function SystemPanel({ sysInfo }) {
+  const cpu = sysInfo?.cpu_pct ?? 23;
+  const ram = sysInfo?.ram_pct ?? 61;
+  const temp = sysInfo?.cpu_temp ?? 48;
+  const disk = sysInfo?.disk_pct ?? 38;
   const gauges=[
-    {label:"CPU",    val:23, col:C.cyan,  unit:"%",    detail:"i5-6200U · 2 cores · 1.8 GHz"},
-    {label:"RAM",    val:61, col:C.purple, unit:"%",   detail:"4.9 GB used / 8 GB"},
-    {label:"Temp",   val:48, col:C.yellow, unit:"°C",  detail:"Throttle at 80°C"},
-    {label:"Disk",   val:38, col:C.green,  unit:"%",   detail:"97 GB used / 256 GB NVMe"},
+    {label:"CPU",  val:cpu,  col:C.cyan,   unit:"%",  detail:sysInfo?.cpu_model||"i5-6200U · 2.3 GHz"},
+    {label:"RAM",  val:ram,  col:C.purple, unit:"%",  detail:`${sysInfo?.ram_used_gb||"4.9"} GB / ${sysInfo?.ram_total_gb||"8"} GB`},
+    {label:"Temp", val:temp, col:C.yellow, unit:"°C", detail:`Throttle at ${sysInfo?.temp_max||80}°C`},
+    {label:"Disk", val:disk, col:C.green,  unit:"%",  detail:`${sysInfo?.disk_used_gb||"97"} GB / ${sysInfo?.disk_total_gb||"256"} GB`},
   ];
   return (
     <div style={{...s.col,gap:14}}>
@@ -699,12 +715,15 @@ function SystemPanel() {
         ))}
       </div>
       <div className="anim-fade-d2" style={s.card}>
-        <SHdr title="System Info" sub="ThinkPad X1 Carbon Gen 5 · Linux Mint 22.3"/>
+        <SHdr title="System Info" sub={sysInfo?`${sysInfo.os||"Linux"} · ${sysInfo.hostname||"localhost"}`:"ThinkPad X1 Carbon Gen 5 · Linux Mint 22.3"}/>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14}}>
           {[
-            ["CPU","Intel i5-6200U · 2.3 GHz"],["Memory","8 GB DDR4-2133"],
-            ["Storage","Samsung PM961 256 GB NVMe"],["Kernel","6.8.0-60-generic"],
-            ["WiFi Adapter","Intel 8260 (iwlwifi)"],["Driver","iwlwifi-8000C-36.ucode"],
+            ["OS", sysInfo?.os||"Linux Mint 22.3"],
+            ["CPU", sysInfo?.cpu_model||"Intel i5-6200U · 2.3 GHz"],
+            ["Memory", `${sysInfo?.ram_total_gb||8} GB`],
+            ["Disk", `${sysInfo?.disk_total_gb||256} GB`],
+            ["Uptime", sysInfo?.uptime||"N/A"],
+            ["WiFi Adapter", sysInfo?.wifi_adapter||"Intel 8260 (iwlwifi)"],
           ].map(([k,v])=>(
             <div key={k}>
               <div style={{fontSize:10,color:C.muted,fontWeight:600,letterSpacing:0.5}}>{k.toUpperCase()}</div>
@@ -717,7 +736,30 @@ function SystemPanel() {
   );
 }
 
-function AiPanel() {
+function AiPanel({ networks: netsProp, devices: devsProp, diag, sysInfo }) {
+  const nets = netsProp || NETWORKS;
+  const devs = devsProp || DEVICES;
+  const best = nets.length ? [...nets].sort((a,b)=>b.rssi-a.rssi)[0] : null;
+  const rogues = nets.filter(n=>n.rogue);
+  const loss = diag?.packet_loss_pct || 0;
+  const latency = diag?.latency_ms || 0;
+  const score = Math.max(0, 100 - rogues.length*20 - (loss>5?15:loss>0?5:0) - (latency>100?10:0));
+  const liveInsights = [
+    rogues.length>0 && {Icon:Shield, col:C.red, title:"Rogue AP Detected", body:`${rogues[0].ssid} is visible on unknown BSSID ${rogues[0].bssid}. This may be an Evil Twin attack. Do not connect.`},
+    loss>5 && {Icon:Activity, col:C.yellow, title:"High Packet Loss", body:`${loss}% packet loss detected on active connection. Possible causes: interference, distance, or congestion.`},
+    best && best.rssi > -50 && {Icon:Wifi, col:C.green, title:"Excellent Signal", body:`${best.ssid} reporting ${best.rssi} dBm on ${best.band}. Conditions are optimal for high-throughput transfers.`},
+    latency > 100 && {Icon:Globe, col:C.yellow, title:"High Latency", body:`Gateway latency at ${latency}ms — above 100ms threshold. Check for background downloads or QoS issues.`},
+    best && {Icon:ScanLine, col:C.cyan, title:"Channel Recommendation", body:`Best available channel: ${best.ch} (${best.band}). ${nets.filter(n=>n.ch===best.ch).length} APs on same channel.`},
+    devs.filter(d=>!d.vendor||d.vendor==="???").length>0 && {Icon:AlertTriangle, col:C.red, title:"Unknown Device", body:`${devs.filter(d=>!d.vendor||d.vendor==="???").length} device(s) with unidentified MAC vendor detected on network.`},
+  ].filter(Boolean).slice(0,4);
+  const tips = liveInsights.length >= 2 ? liveInsights : [
+    {Icon:Wifi,    col:C.cyan,   title:"Channel Recommendation",   body:"Switch to Channel 36 (5GHz) — only 22% utilisation vs Channel 6 at 78%. Expected throughput gain: ~120 Mbps."},
+    {Icon:Shield,  col:C.red,    title:"Rogue AP Detected",        body:"DE:AD:BE:EF:00:01 is cloning ManitNet-AX3600. This is an Evil Twin attack. Isolate and investigate immediately."},
+    {Icon:Activity,col:C.yellow, title:"Stability Issue",          body:"8.3% packet loss on wlan0. Likely cause: 2.4GHz interference from Ch 6 neighbours. Enable band steering."},
+    {Icon:Zap,     col:C.green,  title:"Speed Optimisation",       body:"Enable 802.11k/v/r for roaming. Prioritise Pi 4B traffic via QoS — it handles all DNS for the network."},
+  ];
+  const summaryScore = liveInsights.length >= 2 ? score : 91;
+  const isLive = liveInsights.length >= 2;
   const tips=[
     {Icon:Wifi,    col:C.cyan,   title:"Channel Recommendation",   body:"Switch to Channel 36 (5GHz) — only 22% utilisation vs Channel 6 at 78%. Expected throughput gain: ~120 Mbps."},
     {Icon:Shield,  col:C.red,    title:"Rogue AP Detected",        body:"DE:AD:BE:EF:00:01 is cloning ManitNet-AX3600. This is an Evil Twin attack. Isolate and investigate immediately."},
@@ -733,14 +775,12 @@ function AiPanel() {
           <Tag text="v1.0.5 NEW" col={C.purple}/>
         </div>
         <p style={{fontSize:13,color:C.textSec,lineHeight:1.75,margin:0}}>
-          Your network is <span style={{color:C.green,fontWeight:600}}>generally healthy</span> with
-          1 critical alert requiring immediate action.
-          ManitNet-AX3600 (5GHz) shows excellent signal at -42 dBm with WPA3 — solid.
-          Your 6GHz band is underutilised despite 160MHz capability — only 2 clients on ManitNet-6GHz.
-          <span style={{color:C.red,fontWeight:600}}> Critical: </span>
-          a rogue AP is mimicking your SSID using an unknown MAC. Investigate DE:AD:BE:EF:00:01 immediately.
-          AdGuard Home at 172.19.137.189 is running perfectly — 2ms DNS latency, excellent.
-          Overall score: <span style={{color:C.cyan,fontWeight:700}}>91/100</span>.
+          Your network is <span style={{color:summaryScore>75?C.green:summaryScore>50?C.yellow:C.red,fontWeight:600}}>{summaryScore>75?"generally healthy":summaryScore>50?"moderate":"needs attention"}</span>
+          {rogues.length>0&&<span> with <span style={{color:C.red,fontWeight:600}}>{rogues.length} critical alert{rogues.length>1?"s":""}</span> requiring immediate action.</span>}
+          {best&&<span> {best.ssid} ({best.band}) shows signal at {best.rssi} dBm{best.sec==="WPA3"?" with WPA3 — solid":best.sec==="WPA2"?" with WPA2":" (open — insecure)"}.</span>}
+          {diag&&<span> Gateway latency: {latency}ms. Packet loss: {loss}%.</span>}
+          {!isLive&&<span> Connect the backend for live AI analysis.</span>}
+          {" "}Overall score: <span style={{color:C.cyan,fontWeight:700}}>{summaryScore}/100</span>.
         </p>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10}}>
@@ -844,14 +884,14 @@ export default function App() {
   };
 
   const panels={
-    dashboard:   <DashboardPanel rssiData={rssiData} speedData={speedData}/>,
-    wireless:    <WirelessPanel/>,
+    dashboard:   <DashboardPanel rssiData={rssiData} speedData={speedData} networks={networks} devices={devices} diag={liveDiag}/>,
+    wireless:    <WirelessPanel networks={networks}/>,
     signal:      <SignalPanel rssiData={rssiData}/>,
     speed:       <SpeedPanel speedData={speedData}/>,
-    devices:     <DevicesPanel/>,
+    devices:     <DevicesPanel devices={devices}/>,
     alerts:      <AlertsPanel/>,
-    system:      <SystemPanel/>,
-    ai:          <AiPanel/>,
+    system:      <SystemPanel sysInfo={liveSystem}/>,
+    ai:          <AiPanel networks={networks} devices={devices} diag={liveDiag} sysInfo={liveSystem}/>,
     phy:         <FeatureGrid title="PHY Information" badge="v1.0.5" col={C.cyan}
       features={["MCS index display","NSS spatial streams","Channel width","Short guard interval","Bitrate TX/RX","TX power (dBm)","RX sensitivity","PHY type (HT/VHT/HE/EHT)","Antenna chains","Radio capabilities","Regulatory domain","Max EIRP"]} />,
     interface:   <FeatureGrid title="Interface Monitor" badge="v1.0.5" col={C.purple}
@@ -962,6 +1002,18 @@ export default function App() {
               <Signal size={11} color={C.cyan}/>
               <span style={{fontFamily:"monospace"}}>ManitNet-AX3600 · 5GHz · Ch 36</span>
             </div>
+            {!checking && (
+              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:10,fontWeight:700,
+                padding:"3px 9px",borderRadius:5,letterSpacing:0.6,
+                background:liveMode?"rgba(34,197,94,0.12)":"rgba(168,85,247,0.12)",
+                border:`1px solid ${liveMode?C.green+"44":C.purple+"44"}`,
+                color:liveMode?C.green:C.purple}}>
+                <span style={{width:5,height:5,borderRadius:"50%",
+                  background:liveMode?C.green:C.purple,
+                  animation:"pulse 1.4s ease-in-out infinite",display:"inline-block"}}/>
+                {liveMode?"LIVE":"DEMO"}
+              </div>
+            )}
             <button onClick={scan} disabled={scanning}
               style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",
                 background:scanning?C.cyanFaint:C.cyan+"22",

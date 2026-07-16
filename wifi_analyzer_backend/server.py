@@ -422,6 +422,67 @@ def run_speedtest():
     except Exception as e:
         return {"download": 0, "upload": 0, "ping": 0, "error": str(e)}
 
+
+def has_wifi():
+    try:
+        if OS == "Windows":
+            import subprocess
+            out = subprocess.check_output(["netsh","wlan","show","interfaces"],stderr=subprocess.DEVNULL).decode()
+            return {"has_wifi": "Name" in out}
+        elif OS == "Darwin":
+            import subprocess
+            out = subprocess.check_output(["networksetup","-listallhardwareports"],stderr=subprocess.DEVNULL).decode()
+            return {"has_wifi": "Wi-Fi" in out}
+        else:
+            import os as _os
+            ifaces = _os.listdir("/sys/class/net/")
+            wireless = [i for i in ifaces if _os.path.exists(f"/sys/class/net/{i}/wireless")]
+            return {"has_wifi": len(wireless) > 0, "interfaces": wireless}
+    except:
+        return {"has_wifi": False}
+
+def get_system():
+    try:
+        import psutil, platform, socket
+        cpu = psutil.cpu_percent(interval=0.5)
+        ram = psutil.virtual_memory()
+        disk = psutil.disk_usage("/")
+        temp = None
+        try:
+            temps = psutil.sensors_temperatures()
+            for k in ["coretemp","cpu_thermal","k10temp"]:
+                if k in temps and temps[k]:
+                    temp = round(temps[k][0].current, 1)
+                    break
+        except: pass
+        uptime_s = int(__import__("time").time() - psutil.boot_time())
+        h, m = divmod(uptime_s // 60, 60)
+        uptime = f"{h}h {m}m"
+        wifi_adapter = ""
+        try:
+            import subprocess, re
+            out = subprocess.check_output(["lspci"], stderr=subprocess.DEVNULL).decode()
+            m2 = re.search(r"Network controller: (.+)", out)
+            if m2: wifi_adapter = m2.group(1).strip()[:40]
+        except: pass
+        return {
+            "cpu_pct": round(cpu, 1),
+            "ram_pct": round(ram.percent, 1),
+            "ram_used_gb": round(ram.used/1e9, 1),
+            "ram_total_gb": round(ram.total/1e9, 1),
+            "disk_pct": round(disk.percent, 1),
+            "disk_used_gb": round(disk.used/1e9, 1),
+            "disk_total_gb": round(disk.total/1e9, 1),
+            "cpu_temp": temp,
+            "temp_max": 80,
+            "os": f"{platform.system()} {platform.release()}",
+            "hostname": socket.gethostname(),
+            "uptime": uptime,
+            "wifi_adapter": wifi_adapter,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+_get_system_orig = get_system
 def get_system():
     info={"os":OS,"os_version":platform.version(),"hostname":platform.node(),
           "cpu_percent":psutil.cpu_percent(interval=0.1),"memory_percent":psutil.virtual_memory().percent}
@@ -481,6 +542,7 @@ class Handler(BaseHTTPRequestHandler):
             "/api/phy": get_phy,
             "/api/link": get_link,
             "/api/diagnostics": get_diagnostics,
+            "/api/has_wifi": lambda: has_wifi(),
             "/api/devices": lambda: {"devices": get_devices()},
             "/api/speedtest": lambda: run_speedtest(),
             "/health": lambda: {"status":"ok","os":OS},

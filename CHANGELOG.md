@@ -201,6 +201,18 @@ All notable changes to WiFi Analyzer Pro are documented here.
 
 ---
 
+## [1.0.6] - 2026-07-16
+
+### Changed
+- All panels now read from live API when backend is running — no more static demo data
+- WirelessPanel, DevicesPanel, SystemPanel, DashboardPanel, AiPanel, SpeedPanel all use real data
+- AI Features panel generates real insights from live scan, diagnostics, and device data
+- Speed Test now hits real Cloudflare endpoint and shows actual results
+- System panel shows real CPU %, RAM, disk, temp, uptime, hostname, WiFi adapter
+- Dashboard stat cards show real packet loss, latency, network count from live APIs
+- 10-second auto-refresh now updates networks, devices, and diagnostics simultaneously
+- Demo mode preserved as fallback when no WiFi card or backend is detected
+
 ## [1.0.4] — 2026-07-15
 
 - Rogue AP detection
