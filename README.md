@@ -14,7 +14,7 @@
 
 **The most advanced open-source WiFi diagnostic platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.5-00d4ff?style=for-the-badge&logoColor=white)](https://github.com/manit6752025/wifi-analyzer-pro/releases)
+[![Version](https://img.shields.io/badge/version-1.0.6-00d4ff?style=for-the-badge&logoColor=white)](https://github.com/manit6752025/wifi-analyzer-pro/releases)
 [![License](https://img.shields.io/badge/license-MIT-a855f7?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/Linux%20%7C%20Windows%20%7C%20macOS%20%7C%20Pi-22c55e?style=for-the-badge)](README.md)
 [![React](https://img.shields.io/badge/React-18-61dafb?style=for-the-badge&logo=react&logoColor=white)](https://reactjs.org)
